@@ -327,6 +327,9 @@
   .btn-danger-ghost{
     background:transparent; border:1px solid rgba(176,36,58,.5); color:#f2a6b0;
   }
+  /* إصلاح تذييل نافذة تعديل الدور: .btn عرضه 100% فكان زر الحذف يستحوذ على الصف ويضغط زر الحفظ */
+  #btn-delete-role{width:auto; flex:0 0 auto; white-space:nowrap;}
+  #btn-save-role{width:auto; flex:1 1 0; min-width:0;}
   .editor-empty{text-align:center; color:var(--text-dim); font-size:13px; padding:24px 10px;}
   .big-num-input{-moz-appearance:textfield; appearance:textfield;}
   .big-num-input::-webkit-inner-spin-button,.big-num-input::-webkit-outer-spin-button{-webkit-appearance:none; margin:0;}
