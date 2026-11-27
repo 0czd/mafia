@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="موزع ادوار المافيا لخاضر يونس: محرك توزيع أدوار لعبة الذئاب، ذيابة، ذيوبة، يونس، يونس خاضر Younes">
+<meta name="theme-color" content="#0b0a0c">
+<meta property="og:title" content="موزع ادوار المافيا">
+<meta property="og:description" content="محرك توزيع أدوار لعبة ذياب يونس Younes">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎭%3C/text%3E%3C/svg%3E">
+<title>موزع أدوار المافيا</title>
+<!-- Cairo عبر Google Fonts؛ دون إنترنت يستخدم المتصفح الخط الاحتياطي تلقائياً -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-black:#0b0a0c;
+    --bg-charcoal:#151316;
+    --bg-charcoal2:#1c191d;
+    --red-deep:#7a0f1b;
+    --red-glow:#c31432;
+    --gold:#c9a24b;
+    --gold-soft:#e4c77a;
+    --text-main:#f2ece2;
+    --text-dim:#9a9296;
+    --citizen:#3f8f6b;
+    --mafia:#b0243a;
+    --shadow:0 10px 30px rgba(0,0,0,.6);
+    --radius:18px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0; padding:0; height:100%;
+    background:var(--bg-black);
+    color:var(--text-main);
+    font-family:'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif;
+    overflow:hidden;
+    -webkit-user-select:none; user-select:none;
+  }
+  input,textarea{-webkit-user-select:text; user-select:text;}
+  button{font-family:inherit; touch-action:manipulation;}
+  #particles{
+    position:fixed; inset:0; z-index:0; opacity:.55; pointer-events:none;
+  }
+  #app{
+    position:relative; z-index:1;
+    max-width:520px; margin:0 auto;
+    height:100%;
+    display:flex; flex-direction:column;
+    padding:18px 16px calc(18px + env(safe-area-inset-bottom));
+  }
+  .screen{
+    flex:1; display:none; flex-direction:column;
+    animation:fadeIn .45s ease;
+    overflow-y:auto;
+  }
+  .screen.active{display:flex;}
+  @keyframes fadeIn{
+    from{opacity:0; transform:translateY(14px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  h1,h2,h3{margin:0; font-weight:700;}
+  .brand{
+    text-align:center; margin-bottom:14px;
+  }
+  .brand h1{
+    font-size:26px; letter-spacing:1px;
+    background:linear-gradient(90deg, var(--gold-soft), var(--gold), #8a6c25);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 0 18px rgba(201,162,75,.25);
+  }
+  .brand .sub{color:var(--text-dim); font-size:12.5px; margin-top:4px;}
+  .card{
+    background:linear-gradient(180deg, var(--bg-charcoal2), var(--bg-charcoal));
+    border:1px solid rgba(201,162,75,.18);
+    border-radius:var(--radius);
+    padding:16px;
+    box-shadow:var(--shadow);
+    margin-bottom:14px;
+  }
+  label.field-label{
+    display:block; font-size:13px; color:var(--gold-soft); margin-bottom:8px; font-weight:600;
+  }
+  .num-input-row{
+    display:flex; align-items:center; justify-content:center; gap:14px;
+  }
+  .big-num-input{
+    width:110px; text-align:center; font-size:30px; font-weight:800;
+    background:var(--bg-black); border:1px solid rgba(201,162,75,.35);
+    border-radius:12px; color:var(--text-main); padding:10px 6px;
+  }
+  .stepper-btn{
+    width:46px; height:46px; border-radius:50%;
+    border:1px solid rgba(201,162,75,.4);
+    background:radial-gradient(circle at 30% 30%, #262024, #151316);
+    color:var(--gold-soft); font-size:22px; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:transform .1s ease, box-shadow .2s ease;
+  }
+  .stepper-btn:active{transform:scale(.9);}
+  .role-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 4px; border-bottom:1px solid rgba(255,255,255,.06);
+    gap:8px;
+  }
+  .role-row:last-child{border-bottom:none;}
+  .role-info{display:flex; align-items:center; gap:10px; flex:1; min-width:0;}
+  .role-icon{
+    width:36px; height:36px; flex:0 0 36px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:10px;
+  }
+  .role-icon.team-citizen{background:rgba(63,143,107,.15); border:1px solid rgba(63,143,107,.4);}
+  .role-icon.team-mafia{background:rgba(176,36,58,.15); border:1px solid rgba(176,36,58,.4);}
+  .role-icon svg{width:20px; height:20px;}
+  .role-text{min-width:0;}
+  .role-name{font-size:14.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .role-team-tag{font-size:10.5px; color:var(--text-dim);}
+  .mini-stepper{display:flex; align-items:center; gap:6px; flex:0 0 auto;}
+  .mini-btn{
+    width:30px; height:30px; border-radius:8px;
+    border:1px solid rgba(201,162,75,.35);
+    background:#1c191d; color:var(--gold-soft); font-size:17px; font-weight:700;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .mini-btn:active{transform:scale(.88);}
+  .mini-count{
+    width:26px; text-align:center; font-size:16px; font-weight:800;
+  }
+  .summary-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--bg-black); border-radius:12px; padding:10px 14px;
+    border:1px solid rgba(201,162,75,.25); font-size:14px; font-weight:700;
+    margin-bottom:10px;
+  }
+  .summary-bar .count-ok{color:#5fc98d;}
+  .summary-bar .count-bad{color:#e06b6b;}
+  .alert-box{
+    border-radius:12px; padding:10px 12px; font-size:12.8px; line-height:1.6;
+    margin-bottom:10px; border:1px solid transparent; display:flex; gap:8px; align-items:flex-start;
+  }
+  .alert-warn{background:rgba(196,140,20,.12); border-color:rgba(196,140,20,.4); color:#e6c477;}
+  .alert-error{background:rgba(176,36,58,.14); border-color:rgba(176,36,58,.5); color:#f2a6b0;}
+  .alert-icon{flex:0 0 auto; margin-top:1px;}
+  .btn{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    width:100%; padding:15px; border-radius:14px;
+    border:none; font-size:16px; font-weight:800; letter-spacing:.3px;
+    cursor:pointer; transition:transform .12s ease, filter .2s ease;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn-primary{
+    background:linear-gradient(135deg, var(--red-glow), var(--red-deep));
+    color:#fff; box-shadow:0 8px 22px rgba(195,20,50,.35);
+  }
+  .btn-primary:disabled{
+    background:#3a3438; color:#7a7378; box-shadow:none; cursor:not-allowed;
+  }
+  .btn-gold{
+    background:linear-gradient(135deg, var(--gold-soft), var(--gold));
+    color:#241b06;
+  }
+  .btn-ghost{
+    background:transparent; border:1px solid rgba(201,162,75,.4); color:var(--gold-soft);
+  }
+  .btn-sm{padding:10px; font-size:13.5px; border-radius:10px;}
+  .center-flex{
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:18px;
+  }
+  .player-token{
+    width:96px; height:96px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #2a2328, var(--bg-black));
+    border:2px solid var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    font-size:34px; font-weight:900; color:var(--gold-soft);
+    box-shadow:0 0 30px rgba(201,162,75,.25), inset 0 0 20px rgba(0,0,0,.6);
+  }
+  .pass-title{font-size:20px; font-weight:800;}
+  .pass-sub{color:var(--text-dim); font-size:14px; max-width:280px;}
+  .shield-icon{width:70px; height:70px; opacity:.85;}
+  .flip-wrap{
+    perspective:1200px; width:100%; max-width:320px; margin:0 auto;
+  }
+  .flip-card{
+    position:relative; width:100%; aspect-ratio:3/4.2;
+    transform-style:preserve-3d; transition:transform .7s cubic-bezier(.2,.85,.35,1);
+  }
+  .flip-card.flipped{transform:rotateY(180deg);}
+  .flip-face{
+    position:absolute; inset:0; -webkit-backface-visibility:hidden; backface-visibility:hidden;
+    border-radius:20px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:20px; text-align:center;
+  }
+  .flip-front{
+    background:linear-gradient(160deg, #201a1d, #0b0a0c);
+    border:2px solid rgba(201,162,75,.4);
+    box-shadow:var(--shadow);
+  }
+  .flip-front .mark{font-size:64px; color:var(--gold); opacity:.85;}
+  .flip-back{
+    transform:rotateY(180deg);
+    box-shadow:var(--shadow);
+    border:2px solid;
+  }
+  .flip-back.team-citizen{
+    background:linear-gradient(160deg, #16261f, #0b0a0c);
+    border-color:var(--citizen);
+  }
+  .flip-back.team-mafia{
+    background:linear-gradient(160deg, #2a141a, #0b0a0c);
+    border-color:var(--mafia);
+  }
+  .role-reveal-icon{width:64px; height:64px; margin-bottom:6px;}
+  .role-reveal-name{font-size:23px; font-weight:900; margin-top:4px;}
+  .role-reveal-team{
+    font-size:12px; font-weight:800; padding:4px 12px; border-radius:20px; margin-top:6px;
+  }
+  .role-reveal-team.team-citizen{background:rgba(63,143,107,.2); color:#8fe0bb;}
+  .role-reveal-team.team-mafia{background:rgba(176,36,58,.22); color:#f2a6b0;}
+  .role-reveal-desc{
+    font-size:12.8px; color:var(--text-dim); line-height:1.7; margin-top:12px; max-width:260px;
+  }
+  .progress-dots{
+    display:flex; justify-content:center; gap:6px; margin-top:8px; flex-wrap:wrap;
+  }
+  .dot{width:8px; height:8px; border-radius:50%; background:#3a3438;}
+  .dot.done{background:var(--gold);}
+  .dot.current{background:var(--red-glow); box-shadow:0 0 8px var(--red-glow);}
+  .final-icon{width:90px; height:90px;}
+  .gm-list{
+    text-align:right; width:100%; max-height:280px; overflow-y:auto; margin-top:6px;
+  }
+  .gm-row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:9px 4px; border-bottom:1px solid rgba(255,255,255,.06); font-size:13.5px;
+  }
+  .gm-row .gm-team{font-size:11px; padding:2px 8px; border-radius:8px; font-weight:700;}
+  .gm-team.team-citizen{background:rgba(63,143,107,.18); color:#8fe0bb;}
+  .gm-team.team-mafia{background:rgba(176,36,58,.2); color:#f2a6b0;}
+  .footer-row{margin-top:auto; position:sticky; bottom:0; padding:10px 0 2px; background:linear-gradient(180deg, transparent, var(--bg-black) 35%);}
+  ::-webkit-scrollbar{width:5px;}
+  ::-webkit-scrollbar-thumb{background:rgba(201,162,75,.3); border-radius:10px;}
+
+  /* ============ ROLE EDITOR MODAL ============ */
+  .modal-overlay{
+    position:fixed; inset:0; z-index:20;
+    background:rgba(5,4,5,.72); backdrop-filter:blur(2px);
+    display:none; align-items:flex-end; justify-content:center;
+  }
+  .modal-overlay.active{display:flex;}
+  .modal-sheet{
+    width:100%; max-width:520px; height:88vh; height:88dvh; max-height:88vh; max-height:88dvh;
+    background:linear-gradient(180deg, var(--bg-charcoal2), var(--bg-charcoal));
+    border:1px solid rgba(201,162,75,.25);
+    border-radius:22px 22px 0 0;
+    box-shadow:0 -10px 40px rgba(0,0,0,.6);
+    display:flex; flex-direction:column;
+    animation:slideUp .32s cubic-bezier(.2,.85,.35,1);
+  }
+  @keyframes slideUp{
+    from{transform:translateY(30px); opacity:0;}
+    to{transform:translateY(0); opacity:1;}
+  }
+  .modal-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 16px 10px; border-bottom:1px solid rgba(255,255,255,.06);
+    flex:0 0 auto;
+  }
+  .modal-header h2{font-size:17px; color:var(--gold-soft);}
+  .modal-close-btn{
+    width:34px; height:34px; border-radius:50%; border:1px solid rgba(201,162,75,.35);
+    background:#1c191d; color:var(--text-dim); font-size:16px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; flex:0 0 auto;
+  }
+  .modal-close-btn:active{transform:scale(.9);}
+  .modal-body{flex:1; min-height:0; overflow-y:auto; padding:14px 16px;}
+  .modal-footer{
+    flex:0 0 auto; padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+    border-top:1px solid rgba(255,255,255,.06);
+    display:flex; gap:10px;
+  }
+  .editor-role-item{
+    display:flex; align-items:center; gap:10px;
+    padding:11px 10px; border-radius:14px;
+    background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.05);
+    margin-bottom:8px; cursor:pointer;
+  }
+  .editor-role-item:active{transform:scale(.98);}
+  .editor-role-item .role-text{flex:1;}
+  .editor-role-item .edit-arrow{color:var(--text-dim); font-size:13px; flex:0 0 auto;}
+  .btn-add-role{
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    width:100%; padding:12px; margin-top:4px; border-radius:14px;
+    border:1px dashed rgba(201,162,75,.4); background:transparent;
+    color:var(--gold-soft); font-family:inherit; font-size:14px; font-weight:700; cursor:pointer;
+  }
+  .btn-add-role:active{transform:scale(.98);}
+  .form-group{margin-bottom:14px;}
+  .form-group label{
+    display:block; font-size:12.5px; color:var(--gold-soft); margin-bottom:6px; font-weight:600;
+  }
+  .form-input, .form-textarea{
+    width:100%; background:var(--bg-black); border:1px solid rgba(201,162,75,.3);
+    border-radius:11px; color:var(--text-main); padding:11px 12px; font-size:16px;
+    font-family:inherit;
+  }
+  .form-textarea{resize:vertical; min-height:64px; line-height:1.6;}
+  .team-toggle{display:flex; gap:8px;}
+  .team-toggle-btn{
+    flex:1; padding:11px; border-radius:11px; text-align:center; font-size:13.5px; font-weight:700;
+    border:1px solid rgba(255,255,255,.1); background:transparent; color:var(--text-dim); cursor:pointer;
+    font-family:inherit;
+  }
+  .team-toggle-btn.sel-citizen{border-color:var(--citizen); background:rgba(63,143,107,.15); color:#8fe0bb;}
+  .team-toggle-btn.sel-mafia{border-color:var(--mafia); background:rgba(176,36,58,.15); color:#f2a6b0;}
+  .icon-swatch-grid{
+    display:grid; grid-template-columns:repeat(6, 1fr); gap:8px;
+  }
+  .icon-swatch{
+    aspect-ratio:1; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    border:1px solid rgba(255,255,255,.1); background:#1c191d; cursor:pointer;
+  }
+  .icon-swatch svg{width:18px; height:18px;}
+  .icon-swatch.selected{border-color:var(--gold); box-shadow:0 0 0 2px rgba(201,162,75,.35) inset;}
+  .form-hint{font-size:11.5px; color:var(--text-dim); margin-top:6px; line-height:1.6;}
+  .btn-danger-ghost{
+    background:transparent; border:1px solid rgba(176,36,58,.5); color:#f2a6b0;
+  }
+  /* إصلاح تذييل نافذة تعديل الدور: .btn عرضه 100% فكان زر الحذف يستحوذ على الصف ويضغط زر الحفظ */
+  #btn-delete-role{width:auto; flex:0 0 auto; white-space:nowrap;}
+  #btn-save-role{width:auto; flex:1 1 0; min-width:0;}
+  .editor-empty{text-align:center; color:var(--text-dim); font-size:13px; padding:24px 10px;}
+  .big-num-input{-moz-appearance:textfield; appearance:textfield;}
+  .big-num-input::-webkit-inner-spin-button,.big-num-input::-webkit-outer-spin-button{-webkit-appearance:none; margin:0;}
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms !important; transition-duration:.01ms !important;}}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<div id="app">
+
+  <!-- ============ SCREEN 1: SETUP ============ -->
+  <div class="screen active" id="screen-setup">
+    <div class="brand">
+      <h1>موزع أدوار المافيا</h1>
+      <div class="sub">(: Made by Younes</div>
+    </div>
+
+    <div class="card">
+      <label class="field-label" for="input-players">عدد اللاعبين الإجمالي</label>
+      <div class="num-input-row">
+        <button class="stepper-btn" id="btn-players-minus" aria-label="إنقاص">−</button>
+        <input type="number" id="input-players" class="big-num-input" value="8" min="4" max="30" inputmode="numeric">
+        <button class="stepper-btn" id="btn-players-plus" aria-label="زيادة">+</button>
+      </div>
+    </div>
+
+    <div class="card" id="roles-card">
+      <label class="field-label" style="margin-bottom:2px;">توزيع الأدوار</label>
+      <div id="roles-list"></div>
+    </div>
+
+    <div class="summary-bar">
+      <span>البطاقات المختارة</span>
+      <span id="summary-count">0 / 8</span>
+    </div>
+
+    <div id="alerts-container"></div>
+
+    <div style="display:flex; gap:10px; margin-bottom:6px;">
+      <button class="btn btn-gold" id="btn-edit-roles" style="flex:1;">✏️ تعديل معلومات الأدوار</button>
+    </div>
+
+    <div class="footer-row">
+      <button class="btn btn-primary" id="btn-start-distribution" disabled>ابدأ التوزيع</button>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 2: PASS ============ -->
+  <div class="screen" id="screen-pass">
+    <div class="center-flex">
+      <svg class="shield-icon" viewBox="0 0 100 100" fill="none">
+        <path d="M50 8 L86 22 V50 C86 72 70 88 50 94 C30 88 14 72 14 50 V22 Z" fill="#1c191d" stroke="#c9a24b" stroke-width="3"/>
+        <path d="M36 50 L46 60 L66 38" stroke="#c9a24b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <div class="player-token" id="pass-player-number">1</div>
+      <div class="pass-title" id="pass-title">اللاعب رقم 1، خذ الهاتف بسرية</div>
+      <div class="pass-sub">تأكد أن أحداً آخر لا يرى الشاشة قبل أن تضغط للكشف عن دورك</div>
+      <button class="btn btn-primary" id="btn-reveal-role" style="max-width:280px;">🔒 اضغط لكشف دورك</button>
+      <div class="progress-dots" id="progress-dots"></div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 3: ROLE REVEAL ============ -->
+  <div class="screen" id="screen-reveal">
+    <div class="center-flex">
+      <div class="flip-wrap">
+        <div class="flip-card" id="flip-card">
+          <div class="flip-face flip-front">
+            <div class="mark">؟</div>
+            <div style="color:var(--text-dim); font-size:12px; margin-top:8px;">دورك السري</div>
+          </div>
+          <div class="flip-face flip-back" id="flip-back">
+            <div class="role-reveal-icon" id="role-icon-large"></div>
+            <div class="role-reveal-name" id="role-name-large"></div>
+            <div class="role-reveal-team" id="role-team-large"></div>
+            <div class="role-reveal-desc" id="role-desc-large"></div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btn-hide-role" style="max-width:280px; margin-top:6px;">إخفاء الدور وتسليم الهاتف</button>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 4: SUMMARY ============ -->
+  <div class="screen" id="screen-summary">
+    <div class="center-flex">
+      <svg class="final-icon" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="44" stroke="#c9a24b" stroke-width="3" fill="#1c191d"/>
+        <path d="M32 52 L44 64 L70 36" stroke="#5fc98d" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <h2 style="font-size:20px;">تم توزيع جميع الأدوار بنجاح!</h2>
+      <div class="pass-sub">يمكن الآن لمدير اللعبة بدء الجولة الأولى (الليل)</div>
+
+      <div class="card" style="width:100%; text-align:right;">
+        <label class="field-label">🔑 قائمة مدير اللعبة</label>
+        <button class="btn btn-ghost btn-sm" id="btn-gm-view">عرض</button>
+        <div id="gm-list-wrap" style="display:none;">
+          <div class="gm-list" id="gm-list"></div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-restart" style="max-width:280px;">🔁 توزيع جديد</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ ROLE EDITOR MODAL: LIST ============ -->
+<div class="modal-overlay" id="modal-roles-list">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <h2>تعديل معلومات الأدوار</h2>
+      <button class="modal-close-btn" id="btn-close-roles-modal" aria-label="إغلاق">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="editor-roles-list"></div>
+      <button class="btn-add-role" id="btn-add-new-role">＋ إضافة دور جديد</button>
+      <div class="form-hint">اضغط على أي دور لتعديل اسمه أو وصفه أو فريقه أو أيقونته، أو لحذفه. تُحفظ التعديلات تلقائياً وتبقى في كل مرة تفتح فيها الصفحة.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" id="btn-reset-roles-default" style="flex:1;">↺ استعادة الأدوار الافتراضية</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ROLE EDITOR MODAL: FORM ============ -->
+<div class="modal-overlay" id="modal-role-form">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <h2 id="role-form-title">تعديل دور</h2>
+      <button class="modal-close-btn" id="btn-close-role-form" aria-label="إغلاق">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>اسم الدور</label>
+        <input type="text" class="form-input" id="form-role-name" maxlength="30" placeholder="مثال: الطبيب">
+      </div>
+      <div class="form-group">
+        <label>الفريق</label>
+        <div class="team-toggle">
+          <button type="button" class="team-toggle-btn" id="form-team-citizen" data-team="citizen">المواطنون</button>
+          <button type="button" class="team-toggle-btn" id="form-team-mafia" data-team="mafia">المافيا</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>وصف الدور (يظهر عند كشف الدور للاعب)</label>
+        <textarea class="form-textarea" id="form-role-desc" maxlength="200" placeholder="اشرح قدرة الدور ومهمة اللاعب..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>الأيقونة</label>
+        <div class="icon-swatch-grid" id="icon-swatch-grid"></div>
+        <div class="form-hint">اختر أيقونة جاهزة تناسب الدور — لا حاجة لأي معرفة تقنية.</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger-ghost btn-sm" id="btn-delete-role" style="flex:0 0 auto; padding-left:16px; padding-right:16px;">🗑️ حذف</button>
+      <button class="btn btn-primary btn-sm" id="btn-save-role" style="flex:1;">حفظ الدور</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+"use strict";
+
+const $ = id => document.getElementById(id);
+const esc = v => String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = {
+  get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+};
+
+/* ============================================================
+   ROLE DEFINITIONS
+============================================================ */
+const STORAGE_KEY = 'mafia_roles_v2';
+
+// مجموعة أيقونات جاهزة يختار منها المستخدم عند إنشاء/تعديل دور،
+// بدون الحاجة لكتابة أي كود SVG يدوياً.
+const ICON_LIBRARY = [
+  { id:'person', svg:`<circle cx="20" cy="14" r="7" stroke="{c}" stroke-width="2.5"/><path d="M8 33c0-7 5.4-12 12-12s12 5 12 12" stroke="{c}" stroke-width="2.5" stroke-linecap="round"/>` },
+  { id:'shield-check', svg:`<path d="M20 4l14 6v10c0 10-6 17-14 20-8-3-14-10-14-20V10z" stroke="{c}" stroke-width="2.2" stroke-linejoin="round"/><path d="M13 20l5 5 9-10" stroke="{c}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>` },
+  { id:'target', svg:`<circle cx="20" cy="20" r="12" stroke="{c}" stroke-width="2.2"/><circle cx="20" cy="20" r="3" fill="{c}"/><path d="M20 4v8M20 28v8M4 20h8M28 20h8" stroke="{c}" stroke-width="2.2" stroke-linecap="round"/>` },
+  { id:'star', svg:`<path d="M20 4l4.5 9.2L34 14.6l-7 6.8 1.7 9.6L20 26.5l-8.7 4.5L13 21.4l-7-6.8 9.5-1.4z" stroke="{c}" stroke-width="2.2" stroke-linejoin="round"/>` },
+  { id:'plus-box', svg:`<rect x="6" y="6" width="28" height="28" rx="6" stroke="{c}" stroke-width="2.2"/><path d="M20 13v14M13 20h14" stroke="{c}" stroke-width="2.5" stroke-linecap="round"/>` },
+  { id:'mask', svg:`<circle cx="20" cy="14" r="7" stroke="{c}" stroke-width="2.5"/><path d="M8 33c0-7 5.4-12 12-12s12 5 12 12" stroke="{c}" stroke-width="2.5" stroke-linecap="round"/><path d="M13 11c3-4 11-4 14 0" stroke="{c}" stroke-width="2.2" stroke-linecap="round"/>` },
+  { id:'crown', svg:`<path d="M7 29L5 12l9 7 6-9 6 9 9-7-2 17z" fill="{c}" fill-opacity=".2" stroke="{c}" stroke-width="2.2" stroke-linejoin="round"/><path d="M8 34h24" stroke="{c}" stroke-width="2.2" stroke-linecap="round"/>` },
+  { id:'mute', svg:`<circle cx="20" cy="20" r="14" stroke="{c}" stroke-width="2.2"/><circle cx="14.5" cy="16" r="1.6" fill="{c}"/><circle cx="25.5" cy="16" r="1.6" fill="{c}"/><path d="M13 26h14" stroke="{c}" stroke-width="2.2" stroke-linecap="round"/><line x1="9" y1="31" x2="31" y2="9" stroke="{c}" stroke-width="2.2" stroke-linecap="round"/>` },
+  { id:'eye', svg:`<path d="M4 20s6-11 16-11 16 11 16 11-6 11-16 11S4 20 4 20z" stroke="{c}" stroke-width="2.2" stroke-linejoin="round"/><circle cx="20" cy="20" r="5" stroke="{c}" stroke-width="2.2"/>` },
+  { id:'moon', svg:`<path d="M27 6a15 15 0 1 0 7 25 12 12 0 0 1-7-25z" stroke="{c}" stroke-width="2.2" stroke-linejoin="round"/>` },
+  { id:'key', svg:`<circle cx="14" cy="14" r="7" stroke="{c}" stroke-width="2.2"/><path d="M19 19l14 14M27 27l4-4M31 31l4-4" stroke="{c}" stroke-width="2.2" stroke-linecap="round"/>` },
+  { id:'skull', svg:`<circle cx="20" cy="17" r="13" stroke="{c}" stroke-width="2.2"/><circle cx="15" cy="16" r="2.4" fill="{c}"/><circle cx="25" cy="16" r="2.4" fill="{c}"/><path d="M16 30h8M17 26v6M23 26v6" stroke="{c}" stroke-width="2.2" stroke-linecap="round"/>` }
+];
+
+function buildIconSVG(iconId, team){
+  const found = ICON_LIBRARY.find(i=>i.id===iconId) || ICON_LIBRARY[0];
+  const color = team === 'mafia' ? '#f2a6b0' : '#8fe0bb';
+  const inner = found.svg.split('{c}').join(color);
+  return `<svg viewBox="0 0 40 40" fill="none">${inner}</svg>`;
+}
+
+const DEFAULT_ROLES_RAW = [
+  {
+    id:'citizen', name:'مواطن صالح', team:'citizen', iconId:'person',
+    desc:'مواطن صالح لا يملك أي قدرات خاصة. مهمتك مراقبة النقاشات والتصويت بحكمة لكشف المافيا.'
+  },
+  {
+    id:'witch', name:'ساحرة', team:'citizen', iconId:'moon',
+    desc:'تستخدم معرفتك بالأسرار لمساعدة المواطنين وكشف الذئب.'
+  },
+  {
+    id:'doctor', name:'طبيب', team:'citizen', iconId:'plus-box',
+    desc:'كل ليلة تختار لاعباً واحداً لحمايته من هجوم الذئب، بما في ذلك نفسك.'
+  },
+  {
+    id:'wolf', name:'ذئب', team:'mafia', iconId:'mask',
+    desc:'تعمل ضد المواطنين وتحاول إقصاءهم ليلاً دون أن تكشف هويتك.'
+  }
+];
+
+function withIcon(role){
+  return Object.assign({}, role, { icon: buildIconSVG(role.iconId, role.team) });
+}
+const DEFAULT_ROLES = DEFAULT_ROLES_RAW.map(withIcon);
+
+const CONFIG_KEY = 'mafia_config_v2';
+
+function loadRolesFromStorage(){
+  try{
+    const parsed = JSON.parse(store.get(STORAGE_KEY));
+    if(!Array.isArray(parsed)) return null;
+    const valid = parsed.filter(r => r && typeof r.id === 'string' && r.id && typeof r.name === 'string' && r.name);
+    return valid.length ? valid.map(r => withIcon({
+      id:r.id, name:r.name, desc:String(r.desc || ''),
+      team: r.team === 'mafia' ? 'mafia' : 'citizen', iconId:r.iconId
+    })) : null;
+  }catch(e){ return null; }
+}
+
+function saveRolesToStorage(){
+  store.set(STORAGE_KEY, JSON.stringify(ROLES.map(r=>({ id:r.id, name:r.name, team:r.team, desc:r.desc, iconId:r.iconId }))));
+}
+
+let ROLES = loadRolesFromStorage() || DEFAULT_ROLES.map(r=>Object.assign({}, r));
+
+/* ============================================================
+   STATE
+============================================================ */
+const DEFAULT_COUNTS = { citizen:4, witch:1, doctor:1, wolf:2 };
+let savedConfig = null;
+try{ savedConfig = JSON.parse(store.get(CONFIG_KEY)); }catch(e){}
+
+const state = {
+  counts: (savedConfig && savedConfig.counts) || DEFAULT_COUNTS,
+  assignments: [],
+  currentPlayerIndex: 0
+};
+
+function syncCounts(){
+  const old = state.counts;
+  state.counts = {};
+  ROLES.forEach(r => { const n = parseInt(old[r.id], 10); state.counts[r.id] = n > 0 ? Math.min(n, 30) : 0; });
+}
+syncCounts();
+
+/* ============================================================
+   PARTICLES BACKGROUND (smoke / embers)
+============================================================ */
+const canvas = $('particles');
+const ctx = canvas.getContext('2d');
+const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const smoke = document.createElement('canvas');
+smoke.width = smoke.height = 64;
+(function(){
+  const c = smoke.getContext('2d');
+  const g = c.createRadialGradient(32,32,0,32,32,32);
+  g.addColorStop(0,'rgba(90,80,85,1)');
+  g.addColorStop(1,'rgba(90,80,85,0)');
+  c.fillStyle = g;
+  c.fillRect(0,0,64,64);
+})();
+const particles = [];
+let rafId = 0;
+
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+function makeParticle(){
+  const ember = Math.random() < 0.2;
+  return {
+    x: Math.random()*canvas.width,
+    y: canvas.height + 20 + Math.random()*100,
+    r: ember ? (1+Math.random()*2) : (30+Math.random()*70),
+    speed: ember ? (0.4+Math.random()*0.6) : (0.15+Math.random()*0.25),
+    drift: (Math.random()-0.5)*0.4,
+    alpha: ember ? (0.4+Math.random()*0.4) : (0.02+Math.random()*0.05),
+    ember: ember,
+    life: 0,
+    maxLife: 600+Math.random()*400
+  };
+}
+function animateParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(const p of particles){
+    p.y -= p.speed; p.x += p.drift; p.life++;
+    let fade = 1;
+    if(p.life < 60) fade = p.life/60;
+    else if(p.life > p.maxLife-60) fade = Math.max(0,(p.maxLife-p.life)/60);
+    ctx.globalAlpha = p.alpha*fade;
+    if(p.ember){
+      ctx.fillStyle = '#c9783c';
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fill();
+    } else {
+      ctx.drawImage(smoke, p.x-p.r, p.y-p.r, p.r*2, p.r*2);
+    }
+    if(p.y < -100 || p.life > p.maxLife) Object.assign(p, makeParticle());
+  }
+  ctx.globalAlpha = 1;
+  rafId = requestAnimationFrame(animateParticles);
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+if(reduceMotion){
+  canvas.style.display = 'none';
+} else {
+  for(let i=0;i<20;i++){ const p = makeParticle(); p.y = Math.random()*canvas.height; particles.push(p); }
+  rafId = requestAnimationFrame(animateParticles);
+  document.addEventListener('visibilitychange', ()=>{
+    cancelAnimationFrame(rafId);
+    if(!document.hidden) rafId = requestAnimationFrame(animateParticles);
+  });
+}
+
+/* ============================================================
+   SETUP SCREEN LOGIC
+============================================================ */
+const inputPlayers = document.getElementById('input-players');
+const rolesList = document.getElementById('roles-list');
+const summaryCount = document.getElementById('summary-count');
+const alertsContainer = document.getElementById('alerts-container');
+const btnStart = $('btn-start-distribution');
+
+function clampPlayers(v){ const n = parseInt(v,10); return isNaN(n) ? 8 : Math.min(30, Math.max(4, n)); }
+if(savedConfig && savedConfig.players) inputPlayers.value = clampPlayers(savedConfig.players);
+function saveConfig(){ store.set(CONFIG_KEY, JSON.stringify({ players: inputPlayers.value, counts: state.counts })); }
+
+function buildRolesList(){
+  rolesList.innerHTML = '';
+  ROLES.forEach(role=>{
+    const row = document.createElement('div');
+    row.className = 'role-row';
+    row.innerHTML = `
+      <div class="role-info">
+        <div class="role-icon team-${role.team}">${role.icon}</div>
+        <div class="role-text">
+          <div class="role-name">${esc(role.name)}</div>
+          <div class="role-team-tag">${role.team==='citizen' ? 'المواطنون' : 'المافيا'}</div>
+        </div>
+      </div>
+      <div class="mini-stepper">
+        <button class="mini-btn" data-action="minus" data-role="${esc(role.id)}" aria-label="إنقاص ${esc(role.name)}">−</button>
+        <div class="mini-count" id="count-${esc(role.id)}">${state.counts[role.id]}</div>
+        <button class="mini-btn" data-action="plus" data-role="${esc(role.id)}" aria-label="زيادة ${esc(role.name)}">+</button>
+      </div>
+    `;
+    rolesList.appendChild(row);
+  });
+}
+buildRolesList();
+
+rolesList.addEventListener('click', (e)=>{
+  const btn = e.target.closest('.mini-btn');
+  if(!btn) return;
+  const roleId = btn.dataset.role;
+  const action = btn.dataset.action;
+  if(action==='plus') state.counts[roleId] = Math.min(30, state.counts[roleId]+1);
+  else if(action==='minus') state.counts[roleId] = Math.max(0, state.counts[roleId]-1);
+  document.getElementById(`count-${roleId}`).textContent = state.counts[roleId];
+  validateSetup();
+});
+
+document.getElementById('btn-players-plus').addEventListener('click', ()=>{
+  inputPlayers.value = Math.min(30, parseInt(inputPlayers.value||0)+1);
+  validateSetup();
+});
+document.getElementById('btn-players-minus').addEventListener('click', ()=>{
+  inputPlayers.value = Math.max(4, parseInt(inputPlayers.value||0)-1);
+  validateSetup();
+});
+inputPlayers.addEventListener('input', validateSetup);
+inputPlayers.addEventListener('change', ()=>{ inputPlayers.value = clampPlayers(inputPlayers.value); validateSetup(); });
+
+function totalSelected(){
+  return Object.values(state.counts).reduce((a,b)=>a+b,0);
+}
+function mafiaCount(){
+  return ROLES.filter(r=>r.team==='mafia').reduce((sum,r)=>sum+state.counts[r.id],0);
+}
+function citizenCount(){
+  return ROLES.filter(r=>r.team==='citizen').reduce((sum,r)=>sum+state.counts[r.id],0);
+}
+
+function validateSetup(){
+  const total = parseInt(inputPlayers.value) || 0;
+  const selected = totalSelected();
+  const mafia = mafiaCount();
+  const citizens = citizenCount();
+
+  summaryCount.textContent = `${selected} / ${total}`;
+  summaryCount.className = selected === total ? 'count-ok' : 'count-bad';
+
+  alertsContainer.innerHTML = '';
+  let errors = [];
+  let warnings = [];
+
+  if(total < 4 || total > 30){
+    errors.push('عدد اللاعبين يجب أن يكون بين 4 و30.');
+  }
+  if(selected !== total){
+    errors.push(`عدد البطاقات المختارة (${selected}) لا يساوي عدد اللاعبين (${total}).`);
+  }
+  if(mafia === 0){
+    errors.push('يجب إضافة مافيا واحد على الأقل!');
+  }
+  if(mafia > 0 && mafia >= citizens){
+    warnings.push('نسبة المافيا مرتفعة جداً وسوف تنتهي اللعبة فوراً لصالح المافيا!');
+  }
+
+  errors.forEach(msg=>{
+    const box = document.createElement('div');
+    box.className = 'alert-box alert-error';
+    box.innerHTML = `<span class="alert-icon">⛔</span><span>${msg}</span>`;
+    alertsContainer.appendChild(box);
+  });
+  warnings.forEach(msg=>{
+    const box = document.createElement('div');
+    box.className = 'alert-box alert-warn';
+    box.innerHTML = `<span class="alert-icon">⚠️</span><span>${msg}</span>`;
+    alertsContainer.appendChild(box);
+  });
+
+  btnStart.disabled = errors.length > 0;
+  saveConfig();
+}
+validateSetup();
+
+/* ============================================================
+   ROLE EDITOR (add / edit / delete roles, persisted in localStorage)
+============================================================ */
+const modalRolesList = document.getElementById('modal-roles-list');
+const modalRoleForm = document.getElementById('modal-role-form');
+const editorRolesList = document.getElementById('editor-roles-list');
+const iconSwatchGrid = document.getElementById('icon-swatch-grid');
+let editingRoleId = null; // null = creating a new role
+let formSelectedTeam = 'citizen';
+let formSelectedIconId = ICON_LIBRARY[0].id;
+
+function openRolesListModal(){
+  renderEditorRolesList();
+  modalRolesList.classList.add('active');
+}
+function closeRolesListModal(){
+  modalRolesList.classList.remove('active');
+}
+document.getElementById('btn-edit-roles').addEventListener('click', openRolesListModal);
+document.getElementById('btn-close-roles-modal').addEventListener('click', closeRolesListModal);
+modalRolesList.addEventListener('click', (e)=>{ if(e.target === modalRolesList) closeRolesListModal(); });
+
+function renderEditorRolesList(){
+  editorRolesList.innerHTML = '';
+  if(ROLES.length === 0){
+    editorRolesList.innerHTML = '<div class="editor-empty">لا توجد أدوار بعد. أضف دوراً جديداً للبدء.</div>';
+    return;
+  }
+  ROLES.forEach(role=>{
+    const row = document.createElement('div');
+    row.className = 'editor-role-item';
+    row.innerHTML = `
+      <div class="role-icon team-${role.team}">${role.icon}</div>
+      <div class="role-text">
+        <div class="role-name">${esc(role.name)}</div>
+        <div class="role-team-tag">${role.team==='citizen' ? 'المواطنون' : 'المافيا'}</div>
+      </div>
+      <div class="edit-arrow">تعديل ›</div>
+    `;
+    row.addEventListener('click', ()=> openRoleForm(role.id));
+    editorRolesList.appendChild(row);
+  });
+}
+
+document.getElementById('btn-add-new-role').addEventListener('click', ()=> openRoleForm(null));
+
+document.getElementById('btn-reset-roles-default').addEventListener('click', ()=>{
+  if(!confirm('سيتم استبدال جميع الأدوار الحالية بالأدوار الافتراضية. هل أنت متأكد؟')) return;
+  ROLES = DEFAULT_ROLES.map(r=>Object.assign({}, r));
+  saveRolesToStorage();
+  state.counts = Object.assign({}, DEFAULT_COUNTS);
+  syncCounts();
+  inputPlayers.value = 8;
+  renderEditorRolesList();
+  buildRolesList();
+  validateSetup();
+});
+
+function renderIconSwatchGrid(){
+  iconSwatchGrid.innerHTML = '';
+  ICON_LIBRARY.forEach(entry=>{
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'icon-swatch' + (entry.id === formSelectedIconId ? ' selected' : '');
+    btn.innerHTML = buildIconSVG(entry.id, formSelectedTeam);
+    btn.addEventListener('click', ()=>{
+      formSelectedIconId = entry.id;
+      renderIconSwatchGrid();
+    });
+    iconSwatchGrid.appendChild(btn);
+  });
+}
+
+function setFormTeam(team){
+  formSelectedTeam = team;
+  document.getElementById('form-team-citizen').className = 'team-toggle-btn' + (team==='citizen' ? ' sel-citizen' : '');
+  document.getElementById('form-team-mafia').className = 'team-toggle-btn' + (team==='mafia' ? ' sel-mafia' : '');
+  renderIconSwatchGrid();
+}
+document.getElementById('form-team-citizen').addEventListener('click', ()=> setFormTeam('citizen'));
+document.getElementById('form-team-mafia').addEventListener('click', ()=> setFormTeam('mafia'));
+
+function openRoleForm(roleId){
+  editingRoleId = roleId;
+  const role = roleId ? ROLES.find(r=>r.id===roleId) : null;
+
+  document.getElementById('role-form-title').textContent = role ? 'تعديل الدور' : 'إضافة دور جديد';
+  document.getElementById('form-role-name').value = role ? role.name : '';
+  document.getElementById('form-role-desc').value = role ? role.desc : '';
+  formSelectedIconId = role ? role.iconId : ICON_LIBRARY[0].id;
+  setFormTeam(role ? role.team : 'citizen');
+  document.getElementById('btn-delete-role').style.display = role ? 'flex' : 'none';
+
+  modalRoleForm.classList.add('active');
+}
+function closeRoleForm(){
+  modalRoleForm.classList.remove('active');
+}
+document.getElementById('btn-close-role-form').addEventListener('click', closeRoleForm);
+modalRoleForm.addEventListener('click', (e)=>{ if(e.target === modalRoleForm) closeRoleForm(); });
+
+function slugify(name){
+  let base = name.trim().toLowerCase()
+    .replace(/[^a-z0-9\u0600-\u06FF\s-]/g,'')
+    .replace(/\s+/g,'-') || 'role';
+  let id = base, i = 1;
+  while(ROLES.some(r=>r.id===id && r.id!==editingRoleId)){
+    id = `${base}-${i++}`;
+  }
+  return id;
+}
+
+document.getElementById('btn-save-role').addEventListener('click', ()=>{
+  const name = document.getElementById('form-role-name').value.trim();
+  const desc = document.getElementById('form-role-desc').value.trim();
+  if(!name){
+    alert('الرجاء إدخال اسم الدور.');
+    return;
+  }
+
+  if(editingRoleId){
+    const role = ROLES.find(r=>r.id===editingRoleId);
+    role.name = name;
+    role.desc = desc;
+    role.team = formSelectedTeam;
+    role.iconId = formSelectedIconId;
+    role.icon = buildIconSVG(role.iconId, role.team);
+  } else {
+    const newRole = {
+      id: slugify(name), name, desc, team: formSelectedTeam, iconId: formSelectedIconId
+    };
+    newRole.icon = buildIconSVG(newRole.iconId, newRole.team);
+    ROLES.push(newRole);
+    state.counts[newRole.id] = 0;
+  }
+
+  saveRolesToStorage();
+  closeRoleForm();
+  renderEditorRolesList();
+  buildRolesList();
+  validateSetup();
+});
+
+document.getElementById('btn-delete-role').addEventListener('click', ()=>{
+  if(!editingRoleId) return;
+  const role = ROLES.find(r=>r.id===editingRoleId);
+  if(!confirm(`حذف دور "${role.name}"؟ لا يمكن التراجع عن هذا الإجراء.`)) return;
+
+  ROLES = ROLES.filter(r=>r.id!==editingRoleId);
+  delete state.counts[editingRoleId];
+
+  saveRolesToStorage();
+  closeRoleForm();
+  renderEditorRolesList();
+  buildRolesList();
+  validateSetup();
+});
+
+/* ============================================================
+   SCREEN NAVIGATION
+============================================================ */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+/* ============================================================
+   SESSION (يحفظ التوزيع الجاري عند تحديث الصفحة بالخطأ)
+============================================================ */
+const SESSION_KEY = 'mafia_session_v1';
+function saveSession(){
+  try{ sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ids: state.assignments.map(r=>r.id), i: state.currentPlayerIndex })); }catch(e){}
+}
+function clearSession(){
+  try{ sessionStorage.removeItem(SESSION_KEY); }catch(e){}
+}
+function restoreSession(){
+  try{
+    const s = JSON.parse(sessionStorage.getItem(SESSION_KEY));
+    if(!s || !Array.isArray(s.ids) || !s.ids.length) return;
+    const list = s.ids.map(id => ROLES.find(r=>r.id===id));
+    if(list.includes(undefined)){ clearSession(); return; }
+    state.assignments = list;
+    state.currentPlayerIndex = Math.max(0, Math.min(parseInt(s.i,10) || 0, list.length));
+    if(state.currentPlayerIndex >= list.length) showSummaryScreen();
+    else showPassScreen();
+  }catch(e){}
+}
+
+$('btn-start-distribution').addEventListener('click', ()=>{
+  const pool = [];
+  ROLES.forEach(role=>{ for(let i=0;i<state.counts[role.id];i++) pool.push(role); });
+  state.assignments = shuffle(pool);
+  state.currentPlayerIndex = 0;
+  saveSession();
+  showPassScreen();
+});
+
+/* ============================================================
+   PASS SCREEN
+============================================================ */
+function showPassScreen(){
+  const idx = state.currentPlayerIndex;
+  $('pass-player-number').textContent = idx+1;
+  $('pass-title').textContent = `اللاعب رقم ${idx+1}، خذ الهاتف بسرية`;
+  const wrap = $('progress-dots');
+  wrap.innerHTML = '';
+  state.assignments.forEach((_, i)=>{
+    const d = document.createElement('div');
+    d.className = 'dot' + (i < idx ? ' done' : i === idx ? ' current' : '');
+    wrap.appendChild(d);
+  });
+  showScreen('screen-pass');
+}
+$('btn-reveal-role').addEventListener('click', ()=> showRevealScreen());
+
+/* ============================================================
+   REVEAL SCREEN
+============================================================ */
+const flipCard = $('flip-card');
+let hiding = false;
+
+function showRevealScreen(){
+  const role = state.assignments[state.currentPlayerIndex];
+  $('role-icon-large').innerHTML = role.icon;
+  $('role-name-large').textContent = role.name;
+  const teamEl = $('role-team-large');
+  teamEl.textContent = role.team === 'citizen' ? 'فريق المواطنين' : 'فريق المافيا';
+  teamEl.className = `role-reveal-team team-${role.team}`;
+  $('role-desc-large').textContent = role.desc;
+  $('flip-back').className = `flip-face flip-back team-${role.team}`;
+  flipCard.classList.remove('flipped');
+  showScreen('screen-reveal');
+  setTimeout(()=> flipCard.classList.add('flipped'), 150);
+}
+
+$('btn-hide-role').addEventListener('click', ()=>{
+  if(hiding) return;
+  hiding = true;
+  flipCard.classList.remove('flipped');
+  setTimeout(()=>{
+    hiding = false;
+    state.currentPlayerIndex++;
+    saveSession();
+    if(state.currentPlayerIndex >= state.assignments.length) showSummaryScreen();
+    else showPassScreen();
+  }, 350);
+});
+
+/* ============================================================
+   SUMMARY SCREEN
+============================================================ */
+const gmBtn = $('btn-gm-view');
+const gmWrap = $('gm-list-wrap');
+const gmList = $('gm-list');
+
+function showSummaryScreen(){
+  gmWrap.style.display = 'none';
+  gmBtn.textContent = 'عرض';
+  showScreen('screen-summary');
+}
+
+gmBtn.addEventListener('click', ()=>{
+  if(gmWrap.style.display === 'block'){
+    gmWrap.style.display = 'none';
+    gmBtn.textContent = 'عرض';
+    return;
+  }
+  gmList.textContent = '';
+  state.assignments.forEach((role, i)=>{
+    const row = document.createElement('div');
+    row.className = 'gm-row';
+    const name = document.createElement('span');
+    name.textContent = `لاعب ${i+1}: `;
+    const strong = document.createElement('strong');
+    strong.textContent = role.name;
+    name.appendChild(strong);
+    const tag = document.createElement('span');
+    tag.className = `gm-team team-${role.team}`;
+    tag.textContent = role.team === 'citizen' ? 'مواطنون' : 'مافيا';
+    row.append(name, tag);
+    gmList.appendChild(row);
+  });
+  gmWrap.style.display = 'block';
+  gmBtn.textContent = 'إخفاء';
+});
+
+$('btn-restart').addEventListener('click', ()=>{
+  clearSession();
+  state.assignments = [];
+  state.currentPlayerIndex = 0;
+  showScreen('screen-setup');
+  validateSetup();
+});
+
+restoreSession();
+
+})();
+</script>
+</body>
+</html>
